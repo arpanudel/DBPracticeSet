@@ -19,7 +19,9 @@ namespace DOOR.Shared.DTO
         public string CreatedBy { get; set; } = null!;
         public DateTime CreatedDate { get; set; }
         [StringLength(30)]
+        public int? PrerequisiteSchoolId { get; set; }
 
+        public int SchoolId { get; set; }
         public string ModifiedBy { get; set; } = null!;
         public DateTime ModifiedDate { get; set; }
     }
