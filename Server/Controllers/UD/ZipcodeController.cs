@@ -10,62 +10,50 @@ namespace DOOR.Server.Controllers.UD
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InstructorController : BaseController
+    public class ZipController : BaseController
     {
-        public InstructorController(DOOROracleContext _DBcontext,
+        public ZipController(DOOROracleContext _DBcontext,
             OraTransMsgs _OraTransMsgs)
-        : base(_DBcontext, _OraTransMsgs)
+            : base(_DBcontext, _OraTransMsgs)
 
         {
         }
 
 
         [HttpGet]
-        [Route("GetInstructor")]
-        public async Task<IActionResult> GetInstructor()
+        [Route("GetZipcode")]
+        public async Task<IActionResult> GetZipcode()
         {
-            List<InstructorDTO> lst = await _context.Instructors
-                .Select(sp => new InstructorDTO
+            List<ZipcodeDTO> lst = await _context.Zipcodes
+                .Select(sp => new ZipcodeDTO
                 {
+                    City = sp.City,
                     CreatedBy = sp.CreatedBy,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = sp.CreatedDate,
                     ModifiedBy = sp.ModifiedBy,
-                    ModifiedDate = DateTime.Now,
-                    FirstName = sp.FirstName,
-                    LastName = sp.LastName,
-                    InstructorId = sp.InstructorId,
-                    Phone = sp.Phone,
-                    Salutation = sp.Salutation,
-                    SchoolId = sp.SchoolId,
-                    StreetAddress = sp.StreetAddress,
-                    Zip = sp.Zip,
-
-
+                    ModifiedDate = sp.ModifiedDate,
+                    State = sp.State,
+                    Zip = sp.Zip
                 }).ToListAsync();
             return Ok(lst);
         }
 
 
         [HttpGet]
-        [Route("GetInstructor/{_InstructorId}/{_SchoolId}")]
-        public async Task<IActionResult> GetInstructor(int _InstructorId, int _SchoolId)
+        [Route("GetZipcode/{_Zip}")]
+        public async Task<IActionResult> GetZipcode(string _Zip)
         {
-            InstructorDTO? lst = await _context.Instructors
-                .Where(x => x.InstructorId == _InstructorId)
-                .Select(sp => new InstructorDTO
+            ZipcodeDTO? lst = await _context.Zipcodes
+                .Where(x => x.Zip == _Zip)
+                .Select(sp => new ZipcodeDTO
                 {
+                    City = sp.City,
                     CreatedBy = sp.CreatedBy,
-                    CreatedDate = DateTime.Now,
-                    Zip = sp.Zip,
-                    FirstName = sp.FirstName,
-                    InstructorId = sp.InstructorId,
-                    Phone = sp.Phone,
-                    LastName = sp.LastName,
+                    CreatedDate = sp.CreatedDate,
                     ModifiedBy = sp.ModifiedBy,
-                    ModifiedDate = DateTime.Now,
-                    StreetAddress = sp.StreetAddress,
-                    Salutation = sp.Salutation,
-                    SchoolId = sp.SchoolId,
+                    ModifiedDate = sp.ModifiedDate,
+                    State = sp.State,
+                    Zip = sp.Zip
 
                 }).FirstOrDefaultAsync();
             return Ok(lst);
@@ -73,33 +61,27 @@ namespace DOOR.Server.Controllers.UD
 
 
         [HttpPost]
-        [Route("PostInstructor")]
-        public async Task<IActionResult> PostInstructor([FromBody] InstructorDTO _InstructorDTO)
+        [Route("PostZipcode")]
+        public async Task<IActionResult> PostZipcode([FromBody] ZipcodeDTO _ZipcodeDTO)
         {
             try
             {
-                Instructor i = await _context.Instructors.Where(x => x.InstructorId == _InstructorDTO.InstructorId).FirstOrDefaultAsync();
+                Zipcode zip = await _context.Zipcodes.Where(x => x.Zip == _ZipcodeDTO.Zip).FirstOrDefaultAsync();
 
-                if (i == null)
+                if (zip == null)
                 {
-                    i = new Instructor
+                    zip = new Zipcode
                     {
-                        ModifiedDate = DateTime.Now,
-                        Phone = _InstructorDTO.Phone,
-                        Salutation = _InstructorDTO.Salutation,
-                        InstructorId = _InstructorDTO.InstructorId,
-                        FirstName = _InstructorDTO.FirstName,
-                        LastName = _InstructorDTO.LastName,
-                        CreatedBy = _InstructorDTO.CreatedBy,
-                        CreatedDate = DateTime.Now,
-                        SchoolId = _InstructorDTO.SchoolId,
-                        ModifiedBy = _InstructorDTO.ModifiedBy,
-                        StreetAddress = _InstructorDTO.StreetAddress,
-                        Zip = _InstructorDTO.Zip,
-
+                        City = _ZipcodeDTO.City,
+                        CreatedBy = _ZipcodeDTO.CreatedBy,
+                        CreatedDate = _ZipcodeDTO.CreatedDate,
+                        ModifiedBy = _ZipcodeDTO.ModifiedBy,
+                        ModifiedDate = _ZipcodeDTO.ModifiedDate,
+                        State = _ZipcodeDTO.State,
+                        Zip = _ZipcodeDTO.Zip
 
                     };
-                    _context.Instructors.Add(i);
+                    _context.Zipcodes.Add(z);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -122,30 +104,24 @@ namespace DOOR.Server.Controllers.UD
         }
 
         [HttpPut]
-        [Route("PutInstructor")]
-        public async Task<IActionResult> PutInstructor([FromBody] InstructorDTO _InstructorDTO)
+        [Route("PutZipcode")]
+        public async Task<IActionResult> PutZipcode([FromBody] ZipcodeDTO _ZipcodeDTO)
         {
             try
             {
-                Instructor i = await _context.Instructors.Where(x => x.InstructorId == _InstructorDTO.InstructorId).FirstOrDefaultAsync();
+                Zipcode zip = await _context.Zipcodes.Where(x => x.Zip == _ZipcodeDTO.Zip).FirstOrDefaultAsync();
 
-                if (i != null)
+                if (zip != null)
                 {
-                    i.ModifiedDate = DateTime.Now;
-                    i.ModifiedDate = DateTime.Now;
-                    i.Phone = _InstructorDTO.Phone;
-                    i.Salutation = _InstructorDTO.Salutation;
-                    i.InstructorId = _InstructorDTO.InstructorId;
-                    i.FirstName = _InstructorDTO.FirstName;
-                    i.LastName = _InstructorDTO.LastName;
-                    i.CreatedBy = _InstructorDTO.CreatedBy;
-                    i.CreatedDate = DateTime.Now;
-                    i.SchoolId = _InstructorDTO.SchoolId;
-                    i.ModifiedBy = _InstructorDTO.ModifiedBy;
-                    i.StreetAddress = _InstructorDTO.StreetAddress;
-                    i.Zip = _InstructorDTO.Zip;
+                    zip.City = _ZipcodeDTO.City;
+                    zip.CreatedBy = _ZipcodeDTO.CreatedBy;
+                    zip.CreatedDate = _ZipcodeDTO.CreatedDate;
+                    zip.ModifiedBy = _ZipcodeDTO.ModifiedBy;
+                    zip.ModifiedDate = _ZipcodeDTO.ModifiedDate;
+                    zip.State = _ZipcodeDTO.State;
+                    zip.Zip = _ZipcodeDTO.Zip;
 
-                    _context.Instructors.Update(i);
+                    _context.Zipcodes.Update(z);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -169,16 +145,16 @@ namespace DOOR.Server.Controllers.UD
 
 
         [HttpDelete]
-        [Route("DeleteInstructor/{_InstructorId}/{_SchoolId}")]
-        public async Task<IActionResult> DeleteCourse(int _InstructorId)
+        [Route("DeleteZipcode/{_Zip}")]
+        public async Task<IActionResult> DeleteCourse(string _Zip)
         {
             try
             {
-                Instructor i = await _context.Instructors.Where(x => x.InstructorId == _InstructorId).FirstOrDefaultAsync();
+                Zipcode zip = await _context.Zipcodes.Where(x => x.Zip == _Zip).FirstOrDefaultAsync();
 
-                if (i != null)
+                if (zip != null)
                 {
-                    _context.Instructors.Remove(i);
+                    _context.Zipcodes.Remove(zip);
                     await _context.SaveChangesAsync();
                 }
             }
